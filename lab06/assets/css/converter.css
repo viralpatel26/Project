@@ -1,0 +1,41 @@
+html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-top: 40px;
+    font-family: 'Anton', sans-serif;
+    background-color:cyan;
+    
+}
+
+body header hr {
+    width: 100%;
+    color: greenyellow;
+}
+body header h1{
+    text-align: center;
+}
+  
+.imperial, .metric {
+
+    float:left;
+    font-size: 18px;
+    text-align: center;
+    margin-left: 300px;
+}
+
+.imperial {
+    margin-right: 50px;
+}
+
+.imperial div input, .metric div input {
+    font-family: 'Montserrat', sans-serif;
+    height: 35px;
+    border-radius: 1px;
+}

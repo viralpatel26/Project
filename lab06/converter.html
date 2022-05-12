@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Conversions</title>
+        <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="assets/css/converter.css">
+    </head>
+    <body>
+        <header>
+            <h1>Imperial and Metric Converter</h1>
+            <hr>
+        </header>
+        <div class="imperial">
+            <h3>IMPERIAL</h3>
+            <div>
+                <p>Inches</p>
+                <input type = "number" name = "inches" id = "inches" 
+                onchange = "convertFromInches(this.value);" value = "0">
+            </div>
+            <div>
+                <p>Feet</p>
+                <input type = "number" name = "feet" id = "feet"
+                onchange= "convertFromFeet(this.value);" value = "0">
+            </div>
+            <div>
+                <p>Miles</p>
+                <input type = "number" name = "miles" id = "miles" 
+                onchange ="convertFromMiles(this.value);" value= "0" >
+            </div>
+            <div>
+                <p>Pounds</p>
+                <input type = "number" name = "pounds" id = "pounds" 
+                onchange ="convertFromPounds(this.value);" value= "0" >
+            </div>
+
+        </div>
+        <div class="metric">
+            <h3>METRIC</h3>
+            <div>
+                <p>Centimeters</p>
+                <input type =  "number" value = "0" id = "centimeters"
+                onchange = "convertFromCentimeters(this.value);" value = "0">
+            </div>
+            <div>
+                <p>Meters</p>
+                <input type =  "number"  value = "0" id = "meters"
+                onchange = "convertFromMeters(this.value);" value = "0">
+            </div>
+            <div>
+                <p>Kilometers</p>
+                <input type =  "number"  value = "0" id ="kilometers"
+                onchange = "convertFromKilometers(this.value);" value = "0">
+            </div>
+            <div>
+                <p>Grams</p>
+                <input type =  "number"  value = "0" id ="grams"
+                onchange = "convertFromGrams(this.value);" value = "0">
+            </div>
+        </div>
+        <script type="text/javascript" src="assets/scripts/converter.js"></script>
+    </body>
+</html>
