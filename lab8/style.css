@@ -1,0 +1,24 @@
+body {
+	margin: 0;
+	font-size: 1em;
+}
+
+header, footer {
+	background-color: #333333;
+	color: white;
+	text-align: center;
+	padding: 20px;
+}
+
+.clientform, #display-clients {
+	width: 80%;
+	margin: 40px auto;
+}
+
+.clientform div p {
+	font-weight: bolder;
+}
+
+.form-btns {
+	margin-top: 30px;
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>City Delicatessen</title>
+    </head>
+    <body>
+        <header>
+            <h1>City Delicatessen</h1>
+            <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+            <h2>Order Form</h2>
+            <p id="currentDate"></p>
+        </header>
+        <form method="POST" action="">
+            <div>
+                <h3>Customer Information</h3>
+                <label for="firstName">First Name</label>
+                <input type="text" name="firstName" id="firstName">
+                <label for="lastName">Last Name</label>
+                <input type="text" name="lastName" id="lastName">
+                <label for="address">Address</label>
+                <input type="text" name="address" id="address">
+                <label for="phone">Phone Number</label>
+                <input type="text" name="phone" id="phone">
+            </div>
+            <div>
+                <h3>Select Pizza type</h3>
+                <label>
+                <img src="assets/images/pizza.jpg" alt="Super Chessy">
+                <input type="radio" name="pizzaType[]" value="Super Chessy">
+                <span>Super Cheessy</span>
+                </label>
+                <label>
+                <input type="radio" name="pizzaType[]" value="Extra Meaty">
+                <span>Extra Meaty</span>
+                </label>
+                <label>
+                <input type="radio" name="pizzaType[]" value="Really Veggy">
+                <span>Really Veggy</span>
+                </label>
+                <h3>Select Pizza Size</h3>
+                <select name="pizaSize" id="pizzaSize">
+                  <option value="">------</option>
+                  <option value="Small">Small</option>
+                  <option value="Medium">Medium</option>
+                  <option value="Large">Large</option>
+                  <option value="ExtraLarge">Extra Large</option>
+                </select>
+                <h3>Numbe rof Pizzas</h3>
+                <input type="number"  name="totalPizza" min="0" value="0" id="totalPizza">
+                <h3>Select Pizza Toppings</h3>
+                <label>
+                    <input type="checkbox" name="pizzaTopping[]" value="Extra Cheese">
+                    <span>Extra Chesse</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="pizzaTopping[]" value="Pepperoni">
+                    <span>Pepperoni</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="pizzaTopping[]" value="Mushrooms">
+                    <span>Mushrooms</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="pizzaTopping[]" value="Bacon">
+                    <span>Bacon</span>
+                </label>
+                <label>
+                    <input type="checkbox" name="pizzaTopping[]" value="Olives">
+                    <span>Olives</span>
+                </label>
+            </div>
+            <div>
+                <h3>Select Sandwich</h3>
+                <label>
+                    <input type="radio" name="sandwichType[]" value="All Garden Vegetarian">
+                    <span>All Garden Vegetarian</span>
+                </label>
+                <label>
+                    <input type="radio" name="sandwichType[]" value="Big Beef on a Bun">
+                    <span>Big Beef on a Bun</span>
+                </label>
+                <label>
+                    <input type="radio" name="sandwichType[]" value="Mixed Grill">
+                    <span>Mixed Grill </span>
+                </label>
+                <label>
+                    <input type="radio" name="sandwichType[]" value="Grilled Pork">
+                    <span>Grilled Pork</span>
+                </label>
+                <h3>Number of Sandwiche</h3>
+                    <input type="number"  name="totalSandwich min="0" value="0">           
+            </div>
+            <div>
+                <h3>Select Drink</h3>
+                <label>
+                    <input type="radio" name="drinkType[]" value="cola">
+                    <span>cola</span>
+                </label>
+                <label>
+                    <input type="radio" name="drinkType[]" value="orange">
+                    <span>orange</span>
+                </label>
+                <label>
+                    <input type="radio" name="drinkType[]" value="lemon">
+                    <span>lemon</span>
+                </label>
+                <label>
+                    <input type="radio" name="drinkType[]" value="rootBear">
+                    <span>root bear</span>
+                </label>
+                <h3>Drink Size</h3>
+                <select name="drinkSize" id="drinkSize">
+                    <option value="">------</option>
+                    <option value="small">Small</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Large">Large</option>
+                </select>
+                <h3>Number of Drinks</h3>
+                <input type="number" name="totalDrinks" id="totalDrinks" min="0" value="0">
+            </div>
+            
+        </form>
+        <div>
+            <button onclick="checkCookie()">Place Order</button>
+            <!--<button onclick="calcOrder()" onclick="checkCookie()">Place Order</button> -->
+        </div>
+        <section id="displayOrder"></section>
+        <script type="text/javascript" src="assets/script/script.js"></script>
+    </body>
+</html>

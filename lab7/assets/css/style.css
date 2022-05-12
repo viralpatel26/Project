@@ -1,0 +1,30 @@
+html{
+    box-sizing: border-box;
+}
+*,*:before,*:after{
+    box-sizing: inherit;
+}
+body{
+    margin: 0;
+}
+header{
+    text-align: center;
+    padding: 20px;
+}
+.container{
+    width:80%;
+    margin: 40px auto;
+}
+.link-input .btns{
+    margin-top: 10px;
+}
+.link-input, .link-input button{
+    padding: 5px;
+    font-size: 18px;
+}
+.link-display{
+    margin-top: 30px;
+}
+#link-display a{
+display: block;
+}
