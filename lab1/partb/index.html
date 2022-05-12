@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>SAIT STUDENT SURVEY</title>
+    <META name="author" content="Viral">
+    </head>
+    <body>
+        <header>
+            <h1>SAIT Student feadback and survey</h1>
+        </header>
+        <form method="POST" action="https://www.sait.net">
+            <!-- Basic student info-->
+            <fieldset>
+                <h2>Contact information</h2>
+            <div>
+                <lable for="studentName">Student Name</lable>
+                <input type="text" name="studentName">
+            </div>
+            <div>
+                <lable for="studentEmail">Student Email</lable>
+                <input type="email" name="studentEmail"  placeholder="viral@edu.sait.ca">
+            </div>
+            <div>
+                <lable for="studentNumber">Student Phone Number</lable>
+                <input type="tel" name="studentNumber">
+            </div>
+            </fieldset>
+
+            <fieldset>
+                <h2>Liked most about campus</h2>
+                <ul>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="studentLikes[]" value="Campus Location">
+                            <span>Campus Location</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="studentLikes[]" value="Athletic Center">
+                            <span>Athletic Center</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="studentLikes[]" value="Student Center">
+                            <span>Student Center</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" name="studentLikes[]" value="Lab Classes">
+                            <span>Lab Classes</span>
+                        </label>
+                    </li>
+            </ul>
+            </fieldset>
+
+            <fieldset>
+                <h2>Interest in SAIT</h2>
+                <div>
+                <lable>
+                <input type="radio" nmae="studentIntrest[]" value="Open House">
+                <span>Open House</span>
+                </lable>
+                </div>
+                <div>
+                    <lable>
+                    <input type="radio" nmae="studentIntrest[]" value="Advdertising">
+                    <span>Advdertising</span>
+                    </lable>
+                    </div>
+                <div>
+                        <lable>
+                        <input type="radio" nmae="studentIntrest[]" value="Student Counselling">
+                        <span>Student Counselling</span>
+                        </lable>
+                </div>
+                <div>
+                            <lable>
+                            <input type="radio" nmae="studentIntrest[]" value="word of mouth">
+                            <span>Word of mouth</span>
+                            </lable>
+                </div>
+            </fieldset>
+            <fieldset>
+                <h2><lable for="Comments">Comments</lable></h2>
+                <br>
+                    <textarea name="Comments" rows="4" cols="50"></textarea> 
+            </fieldset>
+            <fieldset>
+                <input type="submit" name="submit" value="Submit">
+                <input type="reset" name="reset" value="Reset">
+            </fieldset>
+        </form>
+    </body>
+</html>
