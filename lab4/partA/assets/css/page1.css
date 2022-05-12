@@ -1,0 +1,56 @@
+html{
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+body{
+    position: relative;
+    margin: 0;
+    background-color: lightcyan;
+    
+}
+header h1,h2{
+    margin: 0;
+    font-family: 'Dancing Script', cursive;
+    background-color: lavenderblush;
+    padding:10px;
+}
+main{
+    font-family: 'Great Vibes', cursive;
+    font-size: 20px;
+    margin: 0;
+    float: left;
+    width: 70%;
+    column-count: 2;
+    column-rule: 2px solid grey;
+}
+main article p:first-child{
+    margin-top: 0;
+    
+}
+article{
+    margin: 0;
+}
+section{
+    font-family: 'Great Vibes', cursive;
+    font-size: 20px;
+    position: relative;
+    margin: 10px 0 0 0;
+    float: left;
+    width:30%;
+    height: auto;
+}
+section img{
+    width: 100%;
+    display: block;
+}
+footer{
+    font-family: 'Great Vibes', cursive;
+    font-size: 20px;
+    clear: both;
+    height: 40px;
+    margin: 0;
+    background-color: lavender;
+    text-align: center;
+}

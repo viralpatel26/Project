@@ -1,0 +1,41 @@
+html{
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+body{
+    margin: 0;
+}
+div h1{
+    font-family: 'Dancing Script', cursive;
+    background-color: lavenderblush;
+    text-align: center;
+    margin: 0;
+}
+div figure{
+    margin: 0;
+    width:100%;
+    height: auto;
+}
+div figure img{
+ width: 100%;
+ height: auto;
+}
+div figure figcaption{
+    font-family: 'Great Vibes', cursive;
+    margin: 0;
+}
+div h2{
+    font-family: 'Dancing Script', cursive;
+    background-color: lavenderblush;
+    text-align: center;
+    margin: 0;
+}
+footer{
+    height: 40px;
+    margin: 0;
+    background-color: lavender;
+    text-align: center;
+    font-family: 'Great Vibes', cursive;
+}

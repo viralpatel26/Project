@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Lab 2</title>
+        <link rel="stylesheet" type="text/css" href="assets/css/lab2.css">
+        <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Sedgwick+Ave+Display&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <a name="top"></a>
+        <header>
+            <div>
+            <img src="assets/images/random.jpg" alt="logo">
+            </div>
+            <h1>Viral's webpage</h1>
+            <nav>
+                <a href="#About me">About me</a>
+                <a href="#Courses">Course info</a>
+                <a href="#work experiance">Work experiance</a>
+                <a href="#Contact form">Contact us</a>
+            </nav>
+        </header>
+        <article>
+            <h2 id="About me">Aboute me</h2>
+            <ul>
+                <li>I like to play Cricket and Vollyball.</li>
+                <li>Favourite region for holiday is costal region.</li>
+                <li>Type of food I like vegetarian Indian.</li>
+            </ul>
+            <img src="assets/images/download.jpg" alt="holiday">
+            <img src="assets/images/img2.jpg" alt="gulabjamun">
+            <img src="assets/images/img1.jpg" alt="food">
+        </article>
+        <h2 id="Courses">Courses</h2>
+        <table cellspacing="0">
+            <tr>
+                <th>coures ID</th>
+                <th>coures name</th>
+                <th>description</th>
+                <th>Instructor</th>
+                <th>hours</th>
+            </tr>
+            <tr>
+                <td>cprg256</td>
+                <td>web development</td>
+                <td>Build website</td>
+                <td>Derek Yadlowski</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>cprg250</td>
+                <td>Database Design & Programming</td>
+                <td>Database Query</td>
+                <td>Mohamed ELMenshawy</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>cmps253</td>
+                <td>Interface Design</td>
+                <td>Designing</td>
+                <td>Kody Dillman</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>HREL250</td>
+                <td>Business Dynamics</td>
+                <td>Business Technolgy</td>
+                <td>Achala Vinnakota</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>CPRG251</td>
+                <td>Obj. Orinted Prog. Essentials</td>
+                <td>Business Technolgy</td>
+                <td>Achala Vinnakota</td>
+                <td>10</td>
+            </tr>
+        </table>
+        <section>
+            <h2 id="work experiance">Work experiance</h2>
+            <ol>
+                <li>Superstore Produce clerk</li>
+                <li>Manager in JV optical</li>
+            </ol>
+        </section>
+        <form action="mailto:personal@sait.ca" method="POST">
+            <h2 id="Contact form">Contact form</h2>
+            <div>
+                <label for="msgSubject">Message Subject:</label>
+            <input type="" name="msgSubject">
+            </div>
+            <div>
+                <label for="msgType">Message type:</label>
+                <select id="msgType">
+                <option value="Personal">Personal</option>
+                <option value="Work">Work</option>
+                </select>
+            </div>
+            <div>
+                <label for="textarea">Message text field:</label>
+                <textarea id="textarea" rows="5" cols="30"></textarea>
+            </div>
+            <input type="submit" name="submit" value="Submit">
+            <input type="reset" name="reset" value="Reset">
+        </form>
+        <footer>
+            <a href="#top"> Top of page</a>
+        </footer>
+    </body>
+</html>

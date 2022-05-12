@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Conversion Calculator</title>
+		<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	</head>
+	<body>
+		
+		<header>
+			<h1>Conversion Calculator</h1>
+			<div>
+				<select name="unitSwitch" id="unitSwitch" onchange="changeUnitSystem(this.value)">
+					<option value="imperial" selected="true">Imperial</option>
+					<option value="metric">Metric</option>
+				</select>
+			</div>
+		</header>
+
+
+		<div class="imperial">
+
+			<div>
+				<p>Inches</p>
+				<input type="number" name="inches" id="inches" onchange="convertFromInches(this.value)" value="0" placeholder="5">
+			</div>
+
+			<div>
+				<p>Feet</p>
+				<input type="number" name="feet" id="feet" onchange="convertFromFeet(this.value);" value="0">
+			</div>
+
+			<div>
+				<p>Miles</p>
+				<input type="number" name="miles" id="miles" onchange="convertFromMiles(this.value);" value="0">
+			</div>
+
+		</div>
+
+		<div class="metric">
+
+			<div>
+				<p>Centimeters</p>
+				<input type="number" value="0" id="centimeters" disabled="true">
+			</div>
+
+			<div>
+				<p>Meters</p>
+				<input type="number" value="0" id="meters" disabled="true">
+			</div>
+
+			<div>
+				<p>Kilometers</p>
+				<input type="number" value="0" id="kilometers" disabled="true">
+			</div>
+
+
+		</div>
+
+
+		<script type="text/javascript" src="assets/scripts/conversions.js"></script>
+	</body>
+</html>

@@ -1,0 +1,41 @@
+html{
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+body{
+    position: relative;
+    margin: 0;
+    background-color: lightcyan;
+}
+section p{
+    margin: 0;
+}
+header h2{
+    margin: 0;
+    font-family: 'Great Vibes', cursive;
+    background-color: lavenderblush;
+    padding:10px;
+}
+section{
+    column-count: 2;
+    column-gap: 10px;
+    column-rule: 2px solid grey;
+    font-family: 'Dancing Script', cursive;
+    font-size: 20px;
+}
+section figure img{
+    width: 100%;
+}
+h3,table{
+    font-family: 'Dancing Script', cursive;
+    font-size: 20px;
+}
+footer{
+    font-family: 'Great Vibes', cursive;
+    background-color: lavenderblush;
+    font-size: 20px;
+    text-align: center;
+    padding: 10px;
+}

@@ -1,0 +1,113 @@
+body{
+    background-color: blue;
+    margin: 0;
+    font-family: 'DM Serif Display', serif;
+}
+/* shader style*/
+header,article,table,form,section,footer{
+    background-color: white;
+}
+header{
+    display: block;
+    background-color: blueviolet;
+    position: relative;
+    padding: 30px;
+}
+
+header div img{
+    display: inline-block;
+    position: relative;
+    width: 100px;
+    height: auto;
+}
+
+header h1{
+    display: inline-block;
+    position: relative;
+    left: 10%;
+    font-family: 'Sedgwick Ave Display', cursive;
+    font-size: 20px;
+}
+header nav{
+    display: block;
+}
+header nav a{
+    display: inline-block;
+    padding: 20px0;
+    background-color: coral;
+    color: cornsilk;
+    text-decoration: none;
+}
+body article{
+    color: green;
+}
+body article img{
+    width: 20%;
+}
+body h2{
+    background-color: white;
+    color: greenyellow;
+}
+table{
+width: 600px;
+margin-left: auto;
+margin-right: auto;
+border-style: solid;
+border-color: yellow;
+}
+table tr td{
+    border: 1px solid black;
+    padding: 5px;
+    color: chartreuse;
+}
+table tr th{
+border: 1px solid blue;
+padding: 5px;
+color: blueviolet;
+}
+section h2{
+    color: violet;
+}
+section ol{
+    color: yellow;
+}
+form{
+    display: block;
+    width: 380px;
+    height: 380px;
+    margin: 0 auto 30px;
+    padding: 30px;
+}
+form h2{
+    margin: 0;
+}
+form div{
+    margin-top: 20px;
+}
+form div label{
+    display: block;
+    margin-bottom: 5px;
+}
+form div textarea{
+    margin-bottom: 5px;
+}
+form input{
+    display: inline-block;
+    position: relative;
+    margin-bottom: 5px;
+}
+form div input,form div select,form div textarea{
+    width: 300px;
+}
+form div textarea{
+    height: 150px;
+}
+
+footer{
+    padding: 40px;
+    text-align: center;
+}
+footer a{
+    font-size: 30px;
+    color: tomato;
+}

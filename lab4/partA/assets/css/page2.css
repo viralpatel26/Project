@@ -1,0 +1,31 @@
+html{
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+body{
+    position: relative;
+    margin: 0;
+    background-color: lightcyan;
+}
+header h2{
+    margin: 0;
+    font-family: 'Dancing Script', cursive;
+    background-color: lavenderblush;
+    padding:10px;
+}
+body p,ol{
+    font-family: 'Great Vibes', cursive;
+    font-size: 20px;
+    column-count: 2;
+    column-gap: 10px;
+    column-rule: 2px solid grey;
+}
+
+footer{
+    font-family: 'Dancing Script', cursive;
+    font-size: 20px;
+    background-color: lavenderblush;
+    text-align: center;
+}

@@ -1,0 +1,7 @@
+.imperial, .metric {
+	float: left;
+}
+
+.imperial {
+	margin-right: 50px;
+}
