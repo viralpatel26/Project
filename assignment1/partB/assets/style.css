@@ -1,0 +1,19 @@
+html{
+    box-sizing: border-box;
+}
+*,*:before,*::after{
+    box-sizing: inherit;
+}
+body{
+    background-image: url("../assets/image/1.jpg");
+    color: rgb(35, 35, 36);
+    text-align: center;
+}
+form div label{
+    display: block;
+    
+}
+
+form div label input{
+    margin: 10px 0 10px 10px;
+}

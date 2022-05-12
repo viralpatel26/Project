@@ -1,0 +1,49 @@
+html {
+	box-sizing: border-box;
+}
+*, *:before, *:after {
+	box-sizing: inherit;
+}
+body{
+    margin: 0;
+    background-image: url("../canadian_rockies/6.jpg");
+}
+
+body header h1{
+    font-family: 'Courgette', cursive;
+    margin: 0;
+    text-align: center;
+    background-color: black;
+    color: coral;
+}
+body div{
+    font-family: 'Courgette', cursive;
+    float: left;
+    width: 80%;
+    margin-top: 20px;
+    margin-left: 10%;
+    margin-right: 10%;
+    column-count: 2;
+	column-gap: 20px;
+    column-rule: 2px solid #333333;
+}
+body div article h2:first-child{
+    margin-top: 0;
+}
+body div figure{
+    margin-left: 0;
+    position: relative;
+    width: 100%;   
+}
+body div figure img{
+    width: 100%;
+    height: 80%;
+    transition: all 2s ease-in-out;
+}
+body div figure img:hover{
+    float: left;
+    width: 125%;
+}
+p,h2,h1{
+    color: coral;
+}
