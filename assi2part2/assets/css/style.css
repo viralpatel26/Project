@@ -1,0 +1,108 @@
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
+body {
+    font-size: 18px;
+    
+    margin: 0 90px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    background-image: url('../images/1.jpg');
+    background-size: auto;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+.container {
+    position: relative;
+    background-color: rgba(199, 199, 226, 0.603);
+}
+
+header h1 {
+    padding-top: 35px;
+}
+
+header hr {
+    width: 50%;
+}
+
+header, form, div button {
+    margin-left: 30px;
+}
+
+#displayOrder {
+    display: block;
+    position: fixed;
+    top: 30px;
+    right: 0;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    width: 450px;
+    height: auto;
+    padding: 35px;
+    padding-top: 25px;
+    padding-bottom: 20px;
+    margin-right: 90px;
+    margin-top: 40px;
+    margin-right: 150px;
+}
+
+form div {
+    width: 630px;
+    border: 1px solid black;
+    margin: 30px;
+    padding: 30px;
+}
+
+form div label {
+    display: block;
+}
+
+form div label img {
+    width: 75px; /*put image in a container and set width as 100%*/
+    height: auto;
+    display: block;
+    margin-left: 20px;
+    transition: all 100ms ease-in-out;
+}
+
+form div label img:hover{
+    width: 200px;
+}
+
+
+#btnbox {
+    text-align: left;
+    margin-left: 60px;
+    margin-bottom: 20px;
+    padding-bottom: 40px;
+}
+  
+#btnbox button {
+    padding: 10px;
+    font-size: 18px;
+    transition: all 300ms ease-in-out;
+}
+
+form div input[name="pizzaType[]"]:checked
+ + span /* '+' is used to select a sibling*/ {
+    background-color: lightgreen;
+}
+
+form div input[name="sandwichType[]"]:checked
+ + span /* '+' is used to select a sibling*/ {
+    background-color: lightgreen;
+}
+
+form div input[name="drinkType[]"]:checked
+ + span /* '+' is used to select a sibling*/ {
+    background-color: lightgreen;
+}
+
+/* you can also use input: checked */
