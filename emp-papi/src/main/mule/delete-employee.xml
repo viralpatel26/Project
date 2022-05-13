@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="delete-employeeFlow" doc:id="405704d6-b934-4b23-b84a-6d2f0ac06561" >
+		<http:listener doc:name="Listener" doc:id="9bbce9c4-e7e4-43ec-913a-3661c28db38e" config-ref="HTTP_Listener_config" path="onboard/delete-employee" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ce68489e-58b6-400c-8687-feedfc7b77da" message="Started delete employee flow : #[payload]"/>
+		<set-variable value="#[payload.EmployeeID]" doc:name="Set Variable" doc:id="df428ec2-5bf0-4b43-bd2e-487e1e3a2e49" variableName="employeeID"/>
+		<db:update doc:name="Update" doc:id="81fc2e0d-b3c3-440d-89ef-80fb257dc9ef" config-ref="Database_Config">
+			<db:sql >update onboard.emp_master set emp_status = :emp_status where emp_id = :emp_id</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	emp_status: payload.status,
+	emp_id: payload.EmployeeID
+}]]]></db:input-parameters>
+		</db:update>
+		<choice doc:name="Choice" doc:id="cfbbbbf3-1bed-4d02-8026-b61108928228" >
+			<when expression="#[payload.affectedRows &gt; 0]">
+				<http:request method="GET" doc:name="Request" doc:id="26fb2321-edbb-459c-bb68-e0e6bd6092e6" config-ref="HTTP_Request_configuration" path="/emp-sapi/delete-employee/{empid}">
+					<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"empid" : vars.employeeID
+}]]]></http:uri-params>
+				</http:request>
+				<ee:transform doc:name="Transform Message" doc:id="2cc1105e-34a7-4573-a502-333710541ad9" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status": 200,
+	"Message": "Success"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="a785ca13-802e-4b87-aa76-a3cf8b0d85c6" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message": "Employee Not Found"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>

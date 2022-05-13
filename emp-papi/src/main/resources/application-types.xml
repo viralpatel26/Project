@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="inputMetaData" format="xml">
+      <types:example format="xml" element="employee" location="examples/empinput.xml"/>
+    </types:type>
+    <types:type name="outputMetaData" format="json">
+      <types:shape format="weave" example="examples/empoutput.json"><![CDATA[%dw 2.0
+
+type outputMetaData = {|
+  empid: Number {"typeId": "int"}, 
+  empname: String, 
+  status: String
+|} {"example": "{\"empid\":109,\"empname\":\"FSD\",\"status\":\"A\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="inputExcelMetadata" format="excel">
+      <types:shape format="weave"><![CDATA[%dw 2.0
+
+type inputExcelMetadata = {|
+  Sheet1?: Array<{|    empid: Number,     empname: String  |}>
+|}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="outputURIMetaData" format="json">
+      <types:shape format="weave" example="examples/emp-uri-output-1.json"><![CDATA[%dw 2.0
+
+type outputURIMetaData = Array<{| empid: Number {"typeId": "int"} |}> {"example": "[{\"empid\":100},{\"empid\":101}]"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#ce4cc2bc-e42e-4a60-b5dd-ce31957e8c3b">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="inputMetaData"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="outputMetaData"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#48ef82b6-261c-4d5f-82b0-96aca2d739de">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="inputExcelMetadata"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="outputURIMetaData"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

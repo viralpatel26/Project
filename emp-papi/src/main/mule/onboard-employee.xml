@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="db53cd84-cf62-45b7-a13a-74674bfd1a28" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="a1f9914e-13e3-424d-a84a-c299697c56a3" >
+		<db:oracle-connection host="localhost" user="system" password="password" instance="xe" />
+	</db:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d682395a-6639-4e82-86c9-0c7952b4f79f" >
+		<http:request-connection host="fsd-test-emp-sapi.us-e2.cloudhub.io" port="80" />
+	</http:request-config>
+	<flow name="emp-papiFlow" doc:id="b0b03634-40bc-4f78-bc82-9e055df02f7b" >
+		<http:listener doc:name="Listener" doc:id="10da7061-224b-4064-bf90-ecc158b29a9d" config-ref="HTTP_Listener_config" path="onboard/create-employee"/>
+		<logger level="INFO" doc:name="Logger" doc:id="3eb582ab-fd49-4ed3-ba95-14c9c16109be" message="Started emp-papi flow : #[payload]"/>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="b5f54de8-6df1-427e-bd3c-bd76370073cb" variableName="empPayload"/>
+		<db:insert doc:name="Insert" doc:id="20b774b5-f734-415e-93e7-64cfd0a5a187" config-ref="Database_Config">
+			<db:sql >insert into onboard.emp_master(emp_id, emp_name, emp_status, emp_address) values(:emp_id, :emp_name, :emp_status, :emp_address)</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	emp_id: payload.employee.id,
+	emp_name: payload.employee.name,
+	emp_status: payload.employee.status,
+	emp_address: payload.employee.address
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="ce4cc2bc-e42e-4a60-b5dd-ce31957e8c3b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	empid: vars.empPayload.employee.id,
+	empname: vars.empPayload.employee.name,
+	status: vars.empPayload.employee.status
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="ccfe4a64-a958-41b4-abb6-a9d045232dc9" config-ref="HTTP_Request_configuration" path="/emp-sapi/add-employee"/>
+	</flow>
+</mule>

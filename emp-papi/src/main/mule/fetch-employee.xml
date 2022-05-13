@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="fetch-employeeFlow" doc:id="f51911fc-fe46-4e70-a089-015e4fb09bba" >
+		<http:listener doc:name="Listener" doc:id="6fabad19-c057-400b-a013-19ce0930db43" config-ref="HTTP_Listener_config" path="fetch-employee/{employeeID}"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ffcd8b22-9b84-47c9-a9d9-925b2d901172" message="fetch employee flow started : #[attributes.uriParams.employeeID]"/>
+		<http:request method="GET" doc:name="Request" doc:id="b72fcbfa-aae6-412e-bc39-18fb66056c6d" config-ref="HTTP_Request_configuration" path="/emp-sapi/fetch-employee">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"empid" : attributes.uriParams.employeeID
+}]]]></http:query-params>
+		</http:request>
+		<db:insert doc:name="Insert" doc:id="4e6c9df1-12e7-4406-a39b-03689e2afa58" config-ref="Database_Config">
+			<db:sql >insert into onboard.emp_master(emp_id, emp_name, emp_status, emp_address) values(:emp_id, :emp_name, :emp_status, :emp_address)</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	emp_id: payload.empid,
+	emp_name: payload.empname,
+	emp_status: payload.status,
+	emp_address: ""
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="37ab6bf4-aad1-438b-97d5-48f48221288f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status": 200,
+	"Message": "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
