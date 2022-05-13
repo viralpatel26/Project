@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="e607344b-8fcc-4a30-82da-c833592390a4" >
+		<db:oracle-connection host="localhost" user="system" password="password" instance="xe" />
+	</db:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="86bf72b2-b952-4429-8c2c-8ac56c5da7f8" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<sub-flow name="insert-employee-subflow" doc:id="561b6c48-4afd-42d5-9012-54d731874ebb" >
+		<db:insert doc:id="f68d9d46-5f45-4806-a5f1-de16db60e41e" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO emp_master(emp_id,emp_name, emp_status, emp_address) VALUES(:emp_id,:emp_name,:emp_status,:emp_address)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	emp_id: payload.empID,
+	emp_name: payload.empName,
+	emp_status: payload.empStatus,
+	emp_address: payload.empAddress
+}]]]></db:input-parameters>
+		</db:insert>
+	</sub-flow>
+	<flow name="mule-scope-demoFlow" doc:id="b3946bf5-1d29-4720-8ea8-4cc89f5ba01a" >
+		<http:listener doc:name="Listener" doc:id="3f80aa8a-40db-4739-b31b-1a76290b6681" config-ref="HTTP_Listener_config" path="mule-scope"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5972a215-fad8-461f-b674-376aa7d6f30d" message="Strated scope demo flow"/>
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="3969579e-e84c-44d3-9afd-13a4cf42fe6c" variableName="employeePayload"/>
+		<flow-ref doc:name="Flow Reference" doc:id="209f6ff8-5efb-491d-bd8a-78d26d535185" name="insert-employee-subflow" target="payload"/>
+		<logger level="INFO" doc:name="Logger" doc:id="3655431e-d002-4cef-a984-5a9351386af9" message="Ended scope demo flow"/>
+	</flow>
+</mule>

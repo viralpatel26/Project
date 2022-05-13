@@ -1,0 +1,8 @@
+%dw 2.0
+
+type auto_561b6c48_4afd_42d5_9012_54d731874ebb_Output_Variables_empRecords = {|
+  affectedRows?: Number, 
+  generatedKeys?: { _?: Number }
+|} {"typeAlias": "StatementResult",
+"typeId": "org.mule.extension.db.api.StatementResult"}
+
