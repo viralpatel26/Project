@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="0ed1c5bd-e763-4c71-9953-93ed594a5913" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="fbe192c2-4e82-460d-8be7-85a06548f910" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="1234" />
+	</db:config>
+	<flow name="emp-apiFlow" doc:id="4fd49a30-708e-4699-9c5f-82f7d5b42e6e" >
+		<http:listener doc:name="Listener" doc:id="53b212a4-5f53-4780-bb42-ffa111be93bb" config-ref="HTTP_Listener_config" path="employees">
+			<http:response statusCode="#[vars.httpStatus default 200]" />
+			<http:error-response statusCode="#[vars.httpStatus default 500]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Start Log" doc:id="fc64449f-c38f-4328-9b36-1c69b5f7364c" message="Started fetch employees by designation"/>
+		<set-variable value="#[attributes.queryParams.title]" doc:name="Set title Variable" doc:id="d980f83a-8658-43b5-ace7-beebea147fc5" variableName="title"/>
+		<ee:transform doc:name="Set designation Variable" doc:id="7321b416-35e8-4b63-ab49-acb80c795b2d" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="designation" ><![CDATA[
+if ( vars.title == "SE" ) ("Software Engineer") 
+else if ( vars.title == "L" ) ("Lead")
+else if ( vars.title == "M" ) ("Manager") 
+else ""]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="Fetch Employees By Designation" doc:id="2d2c2c15-bb17-44f2-8f0c-8f6eb69344ce" config-ref="Database_Config">
+			<db:sql ><![CDATA[select mas.emp_id, mas.emp_name, fin.emp_desg, fin.emp_age from onboard.emp_fin_master fin, onboard.emp_master mas where fin.emp_id = mas.emp_id and fin.emp_desg=:emp_desg
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	"emp_desg": vars.designation
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="31070d46-04cc-49dd-bcc3-3602f0cb726b" >
+			<when expression="#[sizeOf(payload) &gt; 0]">
+				<ee:transform doc:name="Prepare Success Response" doc:id="e758a60a-086b-4bb7-a42a-0a4d566a91e7">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+	payload map {
+		"employeeID": $.emp_id,
+		"employeeName": $.emp_name,
+		"employeeDesignation": $.emp_desg,
+		"employeeAge": $.emp_age
+	}
+]]></ee:set-payload>
+			</ee:message>
+					<ee:variables >
+					</ee:variables>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Prepare Not Found Response" doc:id="b13e879f-55c4-4299-94ff-3053ca7a6fee" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 404,
+	"message": "Employees Not Found"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="b672118a-894f-430a-a970-aa8d8e1ca397" message="Completed fetch employees by designation"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e84dec52-5c4d-46a2-9f5e-4c61218f24a6" type="DB:CONNECTIVITY">
+				<ee:transform doc:name="Prepare Database Connection Lost Response" doc:id="eaf69497-d0d7-4469-9e62-4e6602001104" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: 500,
+	message: "Database Connection Lost"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b126f393-2018-453b-9e28-099ecde7c894" type="ANY">
+				<ee:transform doc:name="Prepare Internal Server Error Response" doc:id="96efeafb-bf31-4b77-baf7-a32434fe7d8d" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	status: 500,
+	message: "Internal Server Error"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[500]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="fetch-employees-by-designation-test-suite.xml" >
+		<munit:parameterizations file="emp-designation-parameters.yaml" />
+	</munit:config>
+	<munit:test name="fetch-employees-by-designation-test-suite-emp-apiFlowTest" doc:id="0368f1d1-d789-4fa8-9a16-7c7632c6845a" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Employees Payload By Designation " doc:id="dd17a0d2-8ff5-4e36-a89d-03192758e8a7" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="2d2c2c15-bb17-44f2-8f0c-8f6eb69344ce" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- read(Mule::p('mock_payload'), &quot;application/json&quot;)]" mediaType="application/json" encoding="UTF-8" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Title Query Param Event" doc:id="b11e8e5d-f1ed-41e5-b122-492c8048df02" >
+				<munit:attributes value="#[&quot;queryParams&quot;: {&quot;title&quot;: Mule::p('title')}]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to emp-apiFlow" doc:id="93f96546-3f82-4162-ad9c-56b1c0d25697" name="emp-apiFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Info Log" doc:id="1019f597-a2a2-4d19-9004-7790fbc0fce3" message="#[payload]"/>
+			<munit-tools:assert doc:name="Assert Payload Not Null Expression" doc:id="508ca4f6-787e-4bdc-a868-76749b023a97" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
