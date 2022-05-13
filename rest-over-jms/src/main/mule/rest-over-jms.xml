@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<jms:config name="JMS_Config" doc:name="JMS Config" doc:id="7b8ec6ca-acbb-4fe6-8823-5b2de827ee68" >
+		<jms:active-mq-connection username="admin" password="admin" >
+			<jms:factory-configuration brokerUrl="tcp://localhost:61616" />
+		</jms:active-mq-connection>
+	</jms:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="383afeae-43b3-4e2a-b228-4c102ddf8f4d" >
+		<http:request-connection host="fsd-test-emp-sapi.us-e2.cloudhub.io" port="80" />
+	</http:request-config>
+	<flow name="rest-over-jmsFlow" doc:id="8d1abd77-305d-48b3-9938-62dc081d30bb" >
+		<jms:listener doc:name="Q.FSD.EMP Listener" doc:id="1b2e529b-9836-44e8-9d4f-66309ee9b024" config-ref="JMS_Config" destination="Q.FSD.EMP" inboundContentType="application/json"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="3a46b5ed-f028-4fde-af35-8acc81608c82" message="Started rest over jms flow : #[payload]"/>
+		<ee:transform doc:name="Update Emp Payload" doc:id="2194111b-5406-4ede-89a6-0e3bf717462c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	emp: {
+		empid: payload.employeeId,
+		empstatus: payload.employeeStatus
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d3c2d790-d743-468e-b3e7-ea797bfe1f78" message="#[payload]"/>
+		<http:request method="POST" doc:name="Emp SAPI Update Request" doc:id="6a6ed5ec-4df2-4153-85b0-a544ad31b477" config-ref="HTTP_Request_configuration" path="/emp-sapi/update-employee" responseTimeout="6000"/>
+		<logger level="INFO" doc:name="End Log" doc:id="acaee80b-d46c-439d-a00c-6d1e62ab497c" message="Completed rest over JMS flow : #[payload]"/>
+	</flow>
+</mule>

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="empInputMetadata" format="json">
+      <types:shape format="weave" example="examples/empinput.json"><![CDATA[%dw 2.0
+
+type empInputMetadata = {|
+  employeeId: Number {"typeId": "int"}, 
+  employeeName: String, 
+  employeeStatus: String, 
+  employeeAdddress: String
+|} {"example": "{\\\"employeeId\\\":7878,\\\"employeeName\\\":\\\"FSD\\\",\\\"employeeStatus\\\":\\\"I\\\",\\\"employeeAdddress\\\":\\\"Canada\\\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="empOutputMetaData" format="xml">
+      <types:example format="xml" element="emp" location="examples/empoutput.xml"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#2194111b-5406-4ede-89a6-0e3bf717462c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="empInputMetadata"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="empOutputMetaData"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
