@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config2" doc:name="HTTP Listener config" doc:id="9682aa60-0b2d-4092-a8a4-919918798ad3" basePath="mule-message-structure-demo" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<flow name="read-header-demopFlow" doc:id="85f4b58d-431a-4df1-82bb-15d4472b4c42" >
+		<http:listener doc:name="Listener" doc:id="a3e7ec6b-4b62-4275-80b0-95b84450e6ca" config-ref="HTTP_Listener_config2" path="read-header" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="757dc96a-d927-4630-8ca6-6bc050775e98" message="#[attributes.headers.transactionID]"/>
+	</flow>
+</mule>

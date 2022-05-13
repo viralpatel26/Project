@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" doc:id="fa4557c4-64f3-4049-a1af-986c4c0c5f1c" basePath="mule-message-structure-demo" >
+		<http:listener-connection host="0.0.0.0" port="8083" />
+	</http:listener-config>
+	<flow name="read-xml-demoFlow" doc:id="f9a60dcc-9481-4a8e-a5cb-37f0ebaba7f5" >
+		<http:listener doc:name="Listener" doc:id="3e2d7945-4061-4c28-9657-118e76dff100" config-ref="HTTP_Listener_config1" path="read-xml" allowedMethods="POST">
+			<repeatable-in-memory-stream />
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="87f6cbb4-6ba3-469f-ae92-837311ce0491" message="#[payload.employee.employeeID]"/>
+	</flow>
+</mule>
