@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="fetch-employeeFlow" doc:id="851ba2c0-5d98-48a4-80d1-e56e73d1088c" >
+		<logger level="INFO" doc:name="Logger" doc:id="bf6d2fbe-b9ff-490a-8ab7-5b85770ba796" message="Started fetch employee flow" />
+		<ee:transform doc:name="Transform Message" doc:id="bdb43776-443e-4017-8ad2-8b5b74b49d7a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  empID: 1,
+  empName: "viral",
+  Status: "A"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
