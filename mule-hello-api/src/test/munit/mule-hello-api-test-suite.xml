@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="mule-hello-api-test-suite.xml" />
+	<munit:test name="mule-hello-api-success-test-case" doc:id="61568c9e-b2f2-4e3c-89f0-0aa5b9f1c5af" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="46d41fe2-3f9a-4c24-ba28-c28e47e4ce26" >
+				<munit:attributes value='#[{queryParams: {firstName: "Viral", lastName: "Patel"}}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to mule-hello-apiFlow" doc:id="40831685-eb62-4d34-82ad-6d882781a165" name="mule-hello-apiFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Logger" doc:id="aa3fadfd-ee29-4c0d-8640-319aa4491353" message="#[payload]"/>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="df549f53-e9bb-4f6c-8aad-fa7741cfb876" actual="#[payload.message]" expected='#["Welcome to mule Viral Patel"]' message="Response payload is not correct"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mule-hello-api-success-test-case-assert-that-demo" doc:id="7ea76505-22a3-450a-a296-aa3ecb48312d" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="b42420ae-c3a6-4122-96db-1cb2b0ddea3a" >
+				<munit:attributes value='#[{queryParams: {firstName: "Viral", lastName: "Patel"}}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to mule-hello-apiFlow" doc:id="1c7b28aa-ff8a-4cb3-8404-9810a5cddaf5" name="mule-hello-apiFlow" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Logger" doc:id="13037741-0259-4b8d-8fd3-e7c3e2bbdc8b" message="#[payload]" />
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1eda7efc-558c-45af-a6bf-b6c5ae270916" expression="#[payload.message]" is='#[MunitTools::equalTo("Welcome to mule Viral Patel")]'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mule-hello-api-test-suiteTest" doc:id="fded8268-297e-427b-bd13-cf6216bbf137" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="6723bd93-a119-4818-84e3-0a2bac52650a" >
+				<munit:attributes value='#[{queryParams: {firstName: "Viral", lastName: "Patel"}}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to mule-hello-apiFlow" doc:id="46df3618-b446-421b-b914-e2db7e567153" name="mule-hello-apiFlow" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Logger" doc:id="ef9bb272-9f82-49ff-a534-9156161a94aa" message="#[payload]" />
+			<munit-tools:assert doc:name="Assert expression" doc:id="384fc59f-cb79-4e81-9c01-135e598ab7c0" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts
+---
+payload must equalTo({
+	"message": "Welcome to mule Viral Patel"
+})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mule-hello-api-test-suiteTest1" doc:id="d9ffab78-bb77-4024-a4eb-59a408585592" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="35ea073b-770f-4e90-b215-3f71b6d3e4ff" >
+				<munit:attributes value="#[readUrl('classpath://sayHello/say_hello_input_attributes.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to mule-hello-apiFlow" doc:id="797ffa5b-96fe-4403-ae65-efe8246200d2" name="mule-hello-apiFlow" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Logger" doc:id="c046207a-54b7-4baa-a34a-0fdc8cfcc8b2" message="#[payload]" />
+			<munit-tools:assert doc:name="Assert expression" doc:id="4728ead8-c954-4223-8ac5-63b57daf2693" message="Payload doesn't match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import sayHello::say_hello_response
+---
+say_hello_response::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mule-hello-api-test-suite-mule-hello-apiFlowTest" doc:id="3bfde79c-9a62-4406-aca3-5a4c28037111" description="Test">
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to mule-hello-apiFlow" doc:id="7c2c87d0-6042-49dd-b596-cd3d62ee9087" name="mule-hello-apiFlow"/>
+		</munit:execution>
+	</munit:test>
+	
+
+
+</mule>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="878f3bac-d582-4449-bece-46c02fe20220" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="mule-hello-apiFlow" doc:id="1365b9bb-7c92-44bb-9e77-dc292cc422fa" >
+		<http:listener doc:name="Listener" doc:id="b1a49d84-dde1-4a0f-8cb6-7bd35151d04b" config-ref="HTTP_Listener_config" path="hello"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="aa46cee0-3cb4-4c60-bee4-aea143049fee" message="Started hello mule flow"/>
+		<ee:transform doc:name="Set Hello Mule Response" doc:id="60fcb0a0-bf33-4bac-86ac-9ffb2c1aaaa4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": "Welcome to mule " ++ (attributes.queryParams.firstName as String default ""++ " " ++ attributes.queryParams.lastName as String default "")
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="b84d4dbd-b0f2-47cf-ae95-023ed4f93fd6" message="Completed hello mule flow" />
+	</flow>
+</mule>
