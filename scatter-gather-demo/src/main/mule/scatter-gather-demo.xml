@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="85423e77-f189-4040-8813-0613e74c99e2" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="584f42b0-b038-430c-af77-e1d2b8fc4bae" >
+		<db:oracle-connection host="localhost" user="system" password="password" instance="xe" />
+	</db:config>
+	<flow name="scatter-gather-demoFlow" doc:id="439e29d5-d739-4d2f-a2ca-1ba1886da168" >
+		<http:listener doc:name="Listener" doc:id="8d7cc60d-e5a5-4a0a-94ac-7f96cd3c99e9" config-ref="HTTP_Listener_config" path="sg"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5503ac58-673e-436a-9c1d-c754ca5bbc87" message="Started scatter-gather flow."/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="852b59d1-4149-4a06-8142-f69bf30a77f1" >
+			<route >
+				<db:select doc:name="Select" doc:id="f83eba70-9992-478b-a95e-09a257e6c34c" config-ref="Database_Config">
+					<db:sql ><![CDATA[SELECT * FROM emp_master]]></db:sql>
+				</db:select>
+			</route>
+			<route >
+				<http:request method="GET" doc:name="Request" doc:id="66dd6a48-1b67-48e1-b483-2361c2f17d38" />
+			</route>
+		</scatter-gather>
+	</flow>
+</mule>
