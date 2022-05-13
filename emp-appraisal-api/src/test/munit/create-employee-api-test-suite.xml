@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="create-employee-api-test-suite.xml" />
+	<munit:test name="create-employee-api-success-test-case" doc:id="ca6038b8-9df9-4f86-9248-da08f45e36fc" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Reqres Create Employee Payload" doc:id="62ba6586-8583-42d1-b61f-8174a16bafa1" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f5457cd2-d6a3-4946-9103-7b566705304a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://createemployeetestresources/mock_reqres_response_success_payload.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy" doc:id="7156e188-a8f4-4f9a-8021-197bb7589f1b" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f5457cd2-d6a3-4946-9103-7b566705304a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert Before Reqres Service Call" doc:id="56fdda89-c4c7-4fa0-9a7c-7538a8db4a0c" >
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import  createemployeetestresources::Assert_Reqres_Request_Payload
+---
+Assert_Reqres_Request_Payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert After Reqres Service Call" doc:id="afa7b278-4ccc-46d3-868d-d2059652f107" >
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import  createemployeetestresources::Assert_Reqres_Response_Payload
+---
+Assert_Reqres_Response_Payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Create Employee Request Payload" doc:id="89bb49c2-44f9-4f34-9cb1-9091230163a0" >
+				<munit:payload value="#[readUrl('classpath://createemployeetestresources/mock_create_employee_input_success_payload.dwl')]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to create-employee-api-flow" doc:id="3316c28b-5860-4532-8169-1ec32032f12a" name="create-employee-api-flow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert Create Employee Success Response" doc:id="09df43d8-6b19-4bbb-8c19-0344a924e269" >
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import createemployeetestresources::assert_create_employee_success_response
+---
+assert_create_employee_success_response::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Reqres Service call" doc:id="73b9c3a5-4a67-4c56-8333-72cca96b38ae" processor="http:request" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f5457cd2-d6a3-4946-9103-7b566705304a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

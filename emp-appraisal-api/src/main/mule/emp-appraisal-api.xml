@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5ff1eca8-0001-41dc-b599-d461b8baba09" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="54acd28d-48e5-44ca-a62a-986a7b3ff9f6" >
+		<db:oracle-connection host="loacalhost" user="system" password="password" instance="xe" />
+	</db:config>
+	<flow name="emp-appraisal-api-flow" doc:id="b3956650-a0c3-4c3b-b479-ef427763ee05" >
+		<http:listener doc:name="Listener" doc:id="9cc8cbbe-177a-46d9-a9da-cf5973c247a9" config-ref="HTTP_Listener_config" path="/appraisal/{empID}"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="7191a782-2024-47a8-836a-42a596a4c887" message="Started employee appraisal flow"/>
+		<set-variable value="#[attributes.uriParams.empID]" doc:name="Set employeeID" doc:id="fad9ae5b-519b-4c72-b804-31ca42bc1e98" variableName="employeeID"/>
+		<db:select doc:name="Select Employee Appraisal Details" doc:id="b19581c3-aeb4-4a65-98b5-407a9c676980" config-ref="Database_Config">
+			<db:sql ><![CDATA[select mas.emp_id, mas.emp_name, fin.emp_exp, fin.emp_salary, fin.emp_desg, fin.emp_age, appr.emp_appr_year, appr.emp_appr_per from onboard.emp_fin_master fin, onboard.emp_master mas, onboard.emp_appr_master appr where fin.emp_id = mas.emp_id and appr.emp_id = mas.emp_id and mas.emp_id=:emp_id
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	emp_id: vars.employeeID
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Check ResultSet Size" doc:id="c997c38a-8be1-4239-8457-3db1faee4c1e" >
+			<when expression="#[sizeOf(payload) &gt; 0]">
+				<ee:transform doc:name="Prepare Appraisal Response" doc:id="0ef5b45a-d990-47ea-9d6a-9c66ce3199c0" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"employeeID": payload[0].emp_id,
+	"employeeName": payload[0].emp_name,
+	"employeeApprYear": payload[0].emp_appr_year,
+	"employeeApprPerc": payload[0].emp_appr_per,
+	"employeeExp": payload[0].emp_exp,
+	"employeeSalary": payload[0].emp_salary,
+	"employeeRevisedSalary":round((payload[0].emp_salary) + (payload[0].emp_salary * payload[0].emp_appr_per)/100),
+	"employeeDesignation": payload[0].emp_desg,
+	"employeeAge": payload[0].emp_age
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Prepare Not Found Response" doc:id="cd7c6604-b7a9-4a6f-b2c2-0f4803b1e5a8" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 404,
+	"message": "Employee Not Found"
+}]]></ee:set-payload>
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[404]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="End Log" doc:id="396692c2-28d6-48dc-9a46-b8a5d1897e0f" message="Completed employee appraisal flow"/>
+	</flow>
+</mule>

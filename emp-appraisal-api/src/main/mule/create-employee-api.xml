@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="create-employee-api-flow" doc:id="7af1bc6e-868e-49f1-ab08-d4a2d564e955" >
+		<http:listener doc:name="Listener" doc:id="c8cc8843-c24a-46b5-94fc-6ceb257ae9de" config-ref="HTTP_Listener_config" path="create-employee">
+			<http:error-response statusCode="#[vars.httpStatus default 500]" />
+		</http:listener>
+		<logger level="INFO" doc:name="Start Log" doc:id="53269926-0b74-4aea-b098-dedc4b05f618" message="Started create employee flow"/>
+		<ee:transform doc:name="Prepare Create Employee Request" doc:id="f8a29606-2db1-43c3-88a8-f251cedb28bb">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "name": payload.employeeName,
+    "job": payload.title
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Consume Reqres Employee Service" doc:id="f5457cd2-d6a3-4946-9103-7b566705304a" url="https://reqres.in/api/users1" />
+		<ee:transform doc:name="Set Success Response" doc:id="05205295-40a7-42b2-9b84-0311c5f701eb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 200,
+	"message": "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End Log" doc:id="93962465-0fba-4965-ba25-3dae270a3e21" message="Completed create employee flow"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f770d337-517d-45db-8508-e34845602dd4" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="5512f1ef-331e-41c9-96da-02ef84912535" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 500,
+	"message": "Internal Server Error"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>
