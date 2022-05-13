@@ -1,0 +1,44 @@
+#%RAML 1.0
+title: emp-hr-sapi
+description: To add employee to HR system
+version: 1.0
+
+baseUri: http://{environment}/emp-hr-sapi/{version}
+baseUriParameters:
+  environment:
+    description: dev,test,load,prod
+    enum: [viral-dev-emp-hr-sapi.us-e2.cloudhub.io, viral-test-emp-hr-sapi.us-e2.cloudhub.io, viral-load-emp-hr-sapi.us-e2.cloudhub.io, viral-prod-emp-hr-sapi.us-e2.cloudhub.io]
+securitySchemes:
+  oauth2-schema: !include /exchange_modules/5b088790-131f-462a-9223-c4987c31cf32/oauth20/4.3.1/oauth2.0.raml
+traits:
+  transaction-header: !include /exchange_modules/5b088790-131f-462a-9223-c4987c31cf32/transaction-header/4.3.1/transaction-header.raml
+uses: 
+  ehsat: datatypes/emp-hr-sapi-api-types.raml
+securedBy: [oauth2-schema]
+/create-employee:
+  post:
+    description: To add employee to HR system
+    is: [transaction-header]
+    body:
+      application/json:
+        type: ehsat.CreateEmployeeRequestType
+        example: !include examples/create-employee-request.json
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              type: ehsat.CreateEmployeeResponseType
+              example: !include examples/create-employee-response.json
+      400:
+        body:
+          application/json:
+            example:
+               type: ehsat.BadRequestResponse
+               example: !include examples/bad-request.json
+      500:
+        body:
+          application/json:
+            example:
+               type: ehsat.InternalServerErrorResponse
+               example: !include examples/internal-server-error.json
