@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_61fcb14b_9ea8_433d_b8e7_e40e247fb3e1_Output_Payload = Array<{|  EMP_ID: Number,   EMP_NAME?: String,   EMP_STATUS?: String,   EMP_ADDRESS?: String|}>
+

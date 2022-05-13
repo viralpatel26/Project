@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="globle-error-handlerError_Handler" doc:id="7945c926-1ef1-434b-98db-bddc65b0b85a" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4a0d1de1-ffd5-4a32-ad36-028a878a4271" type="EMP:EMPLOYEE_NOT_FOUND">
+			<ee:transform doc:name="Transform Message" doc:id="33e7ff64-4ac0-4c33-bee9-99061bd0a1a2">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "Status":404001,
+  "Message":"Employee not found"	
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="statusCode"><![CDATA[400]]></ee:set-variable>
+					<ee:set-variable variableName="reasonPhrase"><![CDATA["Employee not found"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="77f8671e-9073-45c0-b149-634d8dcdc963" type="VALIDATION:INVALID_NUMBER">
+			<ee:transform doc:name="Transform Message" doc:id="55b12f5f-674c-4be8-a494-f0837973405f">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status": 400,
+	"Message": error.description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="statusCode"><![CDATA[400]]></ee:set-variable>
+					<ee:set-variable variableName="reasonPhrase"><![CDATA["Bad request"]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="7f6006ab-f135-476c-97d9-1d9a2d62ea47" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="12d68127-19de-4bbe-b9b3-1789074de72b">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status": 500,
+	"Message": error.description
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="reasonPhrase"><![CDATA["Server Error"]]></ee:set-variable>
+					<ee:set-variable variableName="statusCode"><![CDATA[500]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		
+	</error-handler>
+</mule>

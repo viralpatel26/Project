@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="d67d526d-7699-4ec4-a8a9-8e7f2b3e8f28" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="4c81376f-d629-4779-9b16-7478093f20aa" >
+		<db:oracle-connection host="localhost" user="system" password="password" instance="xe" />
+	</db:config>
+	<configuration doc:name="Configuration" doc:id="99d59296-05fb-4f4d-b1a0-58b8048fa57b" defaultErrorHandler-ref="globle-error-handlerError_Handler" />
+	<sub-flow name="fetch-employee-sub-flow" doc:id="61fcb14b-9ea8-433d-b8e7-e40e247fb3e1" >
+		<try doc:name="Try" doc:id="cf172cd8-5156-41fd-b225-613b06531ce9" >
+			<logger level="INFO" doc:name="start Logger" doc:id="25fe508c-5c4d-482a-ae3c-9c6abb9dece3" message="start sub flow" />
+			<db:select doc:name="Select" doc:id="cc87316f-c85a-4afa-b702-66180b6695ef" config-ref="Database_Config">
+			<db:sql><![CDATA[select * from emp_master where emp_id=:emp_id]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	emp_id: attributes.queryParams.empID
+}]]]></db:input-parameters>
+		</db:select>
+			<logger level="INFO" doc:name="End Logger" doc:id="1fff328f-a632-443a-8deb-fdf5e8185727" message="end sub flow" />
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="174fda34-65fe-4efb-a14d-d6d9c54b968a" >
+					<logger level="INFO" doc:name="Logger" doc:id="620e1a9e-c316-4452-9475-63d97c0747f1" message="error occur"/>
+				</on-error-continue>
+			</error-handler>
+		</try>
+	</sub-flow>
+	<flow name="error-handling-demoFlow" doc:id="13e4e17b-be37-4a38-903e-7909a4db7646" >
+		<http:listener doc:name="Listener" doc:id="7f150083-9c34-43c9-b015-d281aa18e721" path="fetch-employee" config-ref="HTTP_Listener_config">
+			<http:error-response statusCode="#[vars.statusCode]" reasonPhrase="#[vars.reasonPhrase]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<validation:is-number numberType="INTEGER" doc:name="Is number" doc:id="04390a39-9eed-4830-9a91-fafddf045adb" value="#[attributes.queryParams.empID]" message="empID should be number"/>
+		<flow-ref doc:name="Flow Reference" doc:id="75375e83-dfaf-4ef5-a32f-63bdf014ae66" name="fetch-employee-sub-flow" />
+		<choice doc:name="Choice" doc:id="1d1cfda5-5557-4d63-8109-11ce02291f5b" >
+			<when expression="#[sizeOf(payload)&gt;0]">
+				<ee:transform doc:name="Transform Message" doc:id="92bed00b-c5df-4afd-ac36-e5802396fdd4">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map(emp,indexOfEmp)->{
+	"EmployeeID": payload[0].EMP_ID,
+	"EmployeeName": payload[0].EMP_NAME,
+	"EmployeeStatus": payload[0].EMP_STATUS,
+	"EmployeeAddress": payload[0].EMP_ADDRESS
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="7aa373c8-63e5-4d10-85b3-78c41ba02fdb" type="EMP:EMPLOYEE_NOT_FOUND"/>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
