@@ -1,0 +1,22 @@
+[
+{   
+	"employeeID":null,
+    "employeeName":"viral",
+    "employeeStatus":"A"
+},
+{
+    "employeeID":100,
+    "employeeName":"viral",
+    "employeeStatus":"I"
+},
+{
+    "employeeID":1001,
+    "employeeName":"viral2",
+    "employeeStatus":"A"
+},
+{
+    "employeeID":101,
+    "employeeName":"viral2",
+    "employeeStatus":"A"
+}
+]

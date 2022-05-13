@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-employee-by-idFlow" doc:id="0a2e9c0e-fe55-4b93-9ebd-b03500249e76" >
+		<http:listener doc:name="get employee listner" doc:id="0c0d69e5-af50-4625-b3cb-b16d5a7b682d" config-ref="HTTP_Listener_config" path="get-employee-by-id" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="get employee by id log" doc:id="202917ab-44a9-45e7-a82f-df18862c511e" message="get employee by id"/>
+		<db:select doc:name="Select employee by id" doc:id="e888ec3c-ed4a-450b-91a9-8e32e4e5c862" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM emp WHERE emp_id=:empID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	empID: attributes.queryParams.employeeID
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Set response" doc:id="185ead77-99f1-4a0e-bb2c-06c4e29af983" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	employeeID: payload[0].EMP_ID,
+	employeeName: payload[0].EMP_NAME,
+	employeeStatus: payload[0].EMP_STATUS
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="get employee by id end log" doc:id="5ae41e38-b842-4140-8aa5-daeeacd57f69" />
+	</flow>
+</mule>

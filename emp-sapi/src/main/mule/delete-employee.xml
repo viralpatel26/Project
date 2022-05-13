@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="delete-employeeFlow" doc:id="d1fdadd0-ff08-4090-947c-eb59dbc6dad2" >
+		<http:listener doc:name="delete employee" doc:id="18bc9dbd-bfd0-4c94-9272-b97ad5c1dbcd" config-ref="HTTP_Listener_config" path="delete-employee/{employeeID}/{employeeName}" allowedMethods="DELETE"/>
+		<logger level="INFO" doc:name="started flow" doc:id="57a52ea6-2fbe-4135-b050-8b0496a0a36c" />
+		<db:stored-procedure doc:name="Called Stored procedure delete employee" doc:id="7e63a38a-4b25-42b1-84ed-b5eea81b1fb1" config-ref="Database_Config">
+			<db:sql ><![CDATA[{call delete_emp(:empID,:empName)}]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	empID: attributes.uriParams.employeeID,
+	empName: attributes.uriParams.employeeName
+}]]]></db:input-parameters>
+		</db:stored-procedure>
+		<ee:transform doc:name="Transform Message" doc:id="7c51697c-ae03-47b7-8014-266429218a1a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 200,
+	"message": "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="ended delete employee flow" doc:id="9598ede6-f5e5-4566-9c0b-715a3612f507" />
+	</flow>
+</mule>

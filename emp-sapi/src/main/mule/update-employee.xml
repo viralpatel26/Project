@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="update-employeeFlow" doc:id="6f9e76a6-1efa-4eb0-b9a3-03c554dc4663" >
+		<http:listener doc:name="update employee listener" doc:id="328c9d8b-078b-4fd1-a4f3-8fc626866f2f" config-ref="HTTP_Listener_config" path="update-employee" allowedMethods="PUT"/>
+		<logger level="INFO" doc:name="Update start log" doc:id="8e4406f2-aa56-49ad-901e-0a0d5a382218" message="started update employee flow"/>
+		<db:update doc:name="Update Employee" doc:id="aa75150e-c78a-4d3d-a908-3dba293cf3df" config-ref="Database_Config">
+			<db:sql ><![CDATA[UPDATE emp SET emp_status=:empStatus WHERE emp_id=:empID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	empID: payload.employee.employeeID,
+	empStatus: payload.employee.employeeStatus
+}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform doc:name="Transform Message" doc:id="90a11ee3-2c4c-4570-afee-a3df04d4ab25" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	response:{
+		status: 200,
+	    message: "success"
+}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End log" doc:id="cefdfc49-f28b-4df5-9f70-f6e3e59f4e15" message="Completed update employee flow"/>
+	</flow>
+</mule>
