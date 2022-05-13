@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="dw-flatten-function-flow" doc:id="a975b5c7-b833-45bb-bb25-7e4354af6067" >
+		<ee:transform doc:name="Flatten Function" doc:id="0cb573af-7f86-4e6c-ac1a-7434684157b1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var empList = [{
+	"empID": 100,
+	"empName": "Chinna",
+	"empStatus": "A"
+},
+	{
+	"empID": 101,
+	"empName": "Mark",
+	"empStatus": "I"
+},
+[{
+	"empID": 102,
+	"empName": "Stephen",
+	"empStatus": "I"
+},
+{
+	"empID": 103,
+	"empName": "John",
+	"empStatus": "A"
+}]
+]
+---
+{
+employees: flatten(empList)
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-pluck-function-flow" doc:id="bcd04357-70e5-444c-a17f-9f412f685acc" >
+		<ee:transform doc:name="Pluck Function" doc:id="7cb41e6a-c2a3-4eeb-9f6e-0b005fb7dfee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var employee = {
+	"empID": 100,
+	"empName": "Chinna",
+	"empStatus": "A"
+}
+---
+{
+	"keysOfEmployee": employee pluck $$,
+	"vaouesOfEmployee": employee pluck $
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-pluck-usecase-flow" doc:id="a168efac-54a9-412d-b6bd-75acb0bb6f92" >
+		<http:listener doc:name="Listener" doc:id="6f2cd256-d476-410f-b03b-78fb9deefd71" config-ref="HTTP_Listener_config" path="create-hr-employee" allowedMethods="POST"/>
+		<logger level="INFO" doc:name="Start Log" doc:id="cfb2b1ba-83da-4431-8555-94a8006250f4" message="Started add hr employee flow : #[payload]"/>
+		<ee:transform doc:name="Transform Employee Payload" doc:id="2391deb3-d93f-447a-a155-7c1fe8166f0a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	employeeID: payload.empID,
+	employeeName: payload.empName,
+	employeeAddress: payload.empAddress pluck $ joinBy ", ",
+	employeeStatus: payload.empStatus,
+	employeeJoinDate: payload.empJoinDate
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert Employee" doc:id="00119337-69d6-4442-99a9-a3bf9f2ad77a" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into hr.emp_master(emp_id, emp_name, emp_address, emp_status, emp_join_date) values(:employeeID, :employeeName, :employeeAddress, :employeeStatus, :employeeJoinDate)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="End Log" doc:id="8c36770d-c790-481f-a86f-be1eb7fec31e" message="Completed employee hr flow"/>
+	</flow>
+</mule>

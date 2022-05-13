@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="dw-of-functionsFlow" doc:id="4b128806-e6b4-4586-abde-7f570ed34464" >
+		<ee:transform doc:name="DW Of Functions" doc:id="455e793e-5e44-4b5a-b6fa-06e156d3df50" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var empName="Chinna"
+var empSkills=["skill1", "skill2"] as Array
+var employee = {
+	"empID": "76868",
+	"empName": "Chinna",
+	"empStatus": "A"
+}
+var employeeList=[{
+	"empID": "76868",
+	"empName": "Chinna",
+	"empStatus": "A"
+},
+{
+	"empID": "76867",
+	"empName": "John",
+	"empStatus": "A"
+},
+{
+	"empID": "76866",
+	"empName": "Mark",
+	"empStatus": "A"
+},
+{
+	"empID": "76865",
+	"empName": "Stephen",
+	"empStatus": "A"
+}]
+---
+{
+	"sizeOf-FieldLevel": sizeOf(empName),
+	"sizeOf-ArrayLevel": sizeOf(empSkills),
+	"sizeOf-ObjectLevel": sizeOf(employee),
+	"sizeOf-ArrayOfObjectLevel": sizeOf(employeeList),
+	"namesOfEmployeeObject": namesOf(employee),
+	"entriesOfEmployeeObject": entriesOf(employee),
+	"keysOFEmployeeObeject": keysOf(employee),
+	"valuesOfEmployeeObject": valuesOf(employee)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-of-functionsFlow1" doc:id="55743a8f-4eb5-4d1e-a05f-0296cacc77a9" >
+		<http:listener doc:name="Listener" doc:id="c17efda4-9942-470e-b4b0-48db535aafc9" config-ref="HTTP_Listener_config" path="fetch-employee"/>
+		<db:select doc:name="Select Employee By ID" doc:id="e9a2ae79-c1e0-4e27-92d9-f3eb01c385ac" config-ref="Database_Config" >
+			<db:sql ><![CDATA[select emp_id, emp_name, emp_join_date from hr.emp_master where emp_id = :emp_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	emp_id: attributes.queryParams.empID
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Prepare Emp Response" doc:id="31d9e379-113f-45d5-af36-067ad4de02b8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+if(sizeOf(payload) > 0)
+{
+	"empID": payload[0].emp_id,
+	"empName": payload[0].emp_name,
+	"empJoinDate": payload[0].emp_join_date
+} else {
+	"message": "Employee Not Found"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

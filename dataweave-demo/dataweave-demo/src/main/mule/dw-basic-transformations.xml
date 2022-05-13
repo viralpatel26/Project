@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="dataweave-demoFlow" doc:id="dcecb2e2-eb6f-4587-9e19-60ac0292dd68" >
+		<ee:transform doc:name="Transform JSON To All Types" doc:id="e6236ca1-f1e7-4627-808a-150f8133b059" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+{
+	empID: payload.empID,
+	empName: payload.empName,
+	empEmail: payload.empEmail,
+	empStatus: payload.empStatus
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dataweave-demoFlow1" doc:id="25941012-f8a4-48cc-9db4-ba68a0626ee7" >
+		<ee:transform doc:name="Transform XML To All Types" doc:id="152e878b-69cd-4a21-83d2-02878a713b17" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	item: {
+		price: payload.book.price,
+		properties: {
+			title: payload.book.title,
+			author: payload.book.author,
+			year: payload.book.year,
+			lungage: payload.book.title.@lang
+		}
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dataweave-demoFlow2" doc:id="fdb7b1c0-0c98-4a36-80df-508f7b3c2484" >
+		<ee:transform doc:name="Transform Attribute Based JSON To XML" doc:id="1ccce408-b8db-4901-87fc-5521033beb6a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	book: {
+		title @(lang: payload.item.properties.lungage): payload.item.properties.title,
+		price: payload.item.price,
+		author @(loc: "US"): payload.item.properties.author[0]
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dataweave-demoFlow3" doc:id="cafb7486-d0c2-4650-a78f-274102d1c853" >
+		<ee:transform doc:name="JSON To CSV" doc:id="095657dc-2ebe-4d88-bb8f-ff91cf6a1c38" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv headerLineNumber = 0 , header = true
+---
+[{
+	empID: payload.empID as String,
+	empName: payload.empName,
+	empEmail: payload.empEmail,
+	empStatus: payload.empStatus
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dataweave-demoFlow4" doc:id="a2e8e8f8-40e9-4a67-8183-5719d0a48a3f" >
+		<ee:transform doc:name="Transform XLSX File To XML" doc:id="50acde7f-bbb6-4425-94e2-085e5912fcd8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+---
+{
+	employee: {
+		empID: payload.empdata.empID default 0,
+		empName: payload.empdata.empName default "",
+		empEmail: payload.empdata.empEmail default "",
+		empStatus: payload.empdata.empStatus default ""
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

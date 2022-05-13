@@ -1,0 +1,11 @@
+[{   
+	employeeID:"",
+    employeeName:"",
+    employeeStatus:"",
+    employeeApprYear:"",
+    employeeApprPer:"",
+    employeeExp:"",
+    employeeSalary:"",
+    employeeDesg:"",
+    employeeAge:""
+}]

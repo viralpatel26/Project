@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c0ca83ae-fba4-4bfc-b93d-0dc532e769f5" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="ec5375a0-e4ee-4247-81a6-974eb78db41e" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="1234" />
+	</db:config>
+	<flow name="dw-flow-control-statements" doc:id="532123cb-f00a-40d4-9cf7-59301d3f78e7" >
+		<ee:transform doc:name="Flow Control Statements" doc:id="30029fb6-0ab0-41e1-b522-4d9101e34463" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var country = "India"
+var city = null
+---
+{
+	currency: if(country == "USA") "USD" else if(country == "India") "IRS" else "None",
+	city: if(city != null) city as String else ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-date-functions" doc:id="acd0ee8d-1f23-4f85-b72a-107f3492d42c" >
+		<ee:transform doc:name="Dw Date Functions" doc:id="4c3d0885-da4d-482e-9614-a2d8bb1c72ba" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  now: now(),
+  isLeapYear1: isLeapYear(|2016-10-01T23:57:59|), 
+  isLeapYear2: isLeapYear(|2017-10-01T23:57:59|),
+  days : daysBetween(|2016-10-01T23:57:59-03:00|, |2017-10-01T23:57:59-03:00|),
+  epochTime : now() as Number,
+  nanoseconds: now().nanoseconds,
+  milliseconds: now().milliseconds,
+  seconds: now().seconds,
+  minutes: now().minutes,
+  hour: now().hour,
+  day: now().day,
+  month: now().month,
+  year: now().year,
+  quarter: now().quarter,
+  dayOfWeek: now().dayOfWeek,
+  dayOfYear: now().dayOfYear,
+  offsetSeconds: now().offsetSeconds,
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-flow-control-statements-use-case" doc:id="7cab3a33-4002-42ab-97a2-0ae51e66a374" >
+		<http:listener doc:name="Listener" doc:id="ab614269-9209-4b56-a8a7-7d62c07872eb" config-ref="HTTP_Listener_config" path="/gratuity-eligibility"/>
+		<db:select doc:name="Select Employee By ID" doc:id="cb1abae1-5253-4149-8798-8e54f33817d8" config-ref="Database_Config">
+			<db:sql ><![CDATA[select emp_id, emp_name, emp_join_date from hr.emp_master where emp_id = :emp_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	emp_id: attributes.queryParams.empID
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Prepare Response" doc:id="206ce8f9-d088-40c6-9338-cdef4ddec126" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var test = null
+fun calExperience(joinDate) = daysBetween(payload[0].emp_join_date as LocalDateTime {format: "yyyy-MM-dd HH:mm:ss"}, now() as LocalDateTime {format: "yyyy-MM-dd HH:mm:ss"}) / 365
+---
+{
+	"empID": payload[0].emp_id,
+	"empName": payload[0].emp_name,
+	"empJoinDate": payload[0].emp_join_date,
+	"empExperience": calExperience(payload[0].emp_join_date),
+	"gratuity": if((calExperience(payload[0].emp_join_date)) > 5 ) "eligible" else "not-eligible",
+	("test": test) if(test != null) 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

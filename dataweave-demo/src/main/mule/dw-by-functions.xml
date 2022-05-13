@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="dw-by-functionsFlow" doc:id="bd13f294-8457-4c7f-94e2-adb8e342b5f0" >
+		<ee:transform doc:name="distinctBy, orderBy, groupBy, joinBy" doc:id="eb561522-5824-4c71-9804-1b13007a669f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var empList = [{
+	"empID": 100,
+	"empName": "Chinna",
+	"empStatus": "A"
+},
+{
+	"empID": 100,
+	"empName": "Chinna",
+	"empStatus": "A"
+},
+	{
+	"empID": 101,
+	"empName": "Mark",
+	"empStatus": "I"
+},
+	{
+	"empID": 103,
+	"empName": "John",
+	"empStatus": "I"
+},
+	{
+	"empID": 102,
+	"empName": "Stehphen",
+	"empStatus": "A"
+}]
+---
+{
+}
+	]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

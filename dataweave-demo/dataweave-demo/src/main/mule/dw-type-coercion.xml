@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="dw-type-coercion-simple-types" doc:id="57b6f579-6832-4ee9-ae94-82a3084533b2" >
+		<ee:transform doc:name="Simple Type Coercions" doc:id="cd4d1ab9-c4d8-4003-b992-7d09b24e988e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+var employee = {
+	empName: "Michael Silva",
+	empLocation: null,
+	empExperience: null,
+	isActive: "true"
+}
+---
+{
+	empName: employee.empName as String default "",
+	empLocation: employee.empLocation as String default "",
+	empExperience: employee.empExperience as Number default 0,
+	isActive: employee.isActive as Boolean default false
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-type-coercion-date-types" doc:id="3a828f21-6ee8-4f66-b289-6b793a70002b" >
+		<ee:transform doc:name="Mostly Used Date Type Coercions" doc:id="86cb4122-9d1b-4682-8100-38e9221e8ec8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"todayDate": now() as Date {format: "yyyy-MMM-dd"},
+	"todayTime": now() as Time {format: "HH:mm:ss.SSS"},
+	"currentHour": now() as Time {format: "HH"},
+	"currentDateTime": now() as LocalDateTime {format: "yyyy-MM-dd HH:mm:ss.SSS"},
+	"UTCTime": ((now() >> "UTC") >> "IST") as DateTime {format: "yyyy-MM-dd HH-mm-ss"},
+	"ISTTime": now() >> "IST",
+	"ESTTime": now() >> "EST",
+	"Los_EnglesTime": now() >> "America/Los_Angeles",
+	"NewYorkTime": now() >> "America/New_York",
+	"LondonTime": now() >> "Europe/Belfast"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-type-coercionFlow" doc:id="82ef5bd3-7eef-4ea6-ac85-016c73bce924" >
+		<http:listener doc:name="Listener" doc:id="10adf6a7-3f2c-4caa-9d04-fd31781f6961" config-ref="HTTP_Listener_config" path="/add-employee"/>
+		<ee:transform doc:name="Transform Employee Payload" doc:id="d5dfd22f-d6a9-4712-86d2-ae0b05964171" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	emp_id: payload.empID as Number,
+	emp_name: payload.empName,
+	emp_address: payload.empAddress,
+	emp_status: payload.empStatus,
+	emp_join_date: (payload.empJoinDate >> "EST")  as LocalDateTime {format: "yyyy-MM-dd HH:mm:ss"} default null
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert Employee" doc:id="cdda1df1-50b9-4fd3-8191-217ce15518b8" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into hr.emp_master(emp_id, emp_name, emp_address, emp_status, emp_join_date) values(:emp_id, :emp_name, :emp_address, :emp_status, :emp_join_date)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Prepare Response" doc:id="8a2019b8-b549-4438-94a4-a5dc4de1fca3" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": 200,
+	"message": "Success"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

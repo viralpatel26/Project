@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="dw-map-mapObject-filter-filterObject-flow" doc:id="2ccceb0b-98cf-43ce-b5b9-a759f23c5051" >
+		<ee:transform doc:name="dw-map-mapObject-filter-filterObject" doc:id="bbe7538f-c6bf-46db-899e-1c93390d1423" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var empList = [{
+	"empID": 100,
+	"empName": "Chinna",
+	"empStatus": "A"
+},
+	{
+	"empID": 101,
+	"empName": "Mark",
+	"empStatus": "I"
+},
+	{
+	"empID": 102,
+	"empName": "John",
+	"empStatus": "I"
+},
+	{
+	"empID": 103,
+	"empName": "Stehphen",
+	"empStatus": "A"
+}]
+---
+{
+"mapExample": empList map(emp, indexOfEmp) -> {
+	"employeeID" : emp.empID,
+	"employeeName": emp.empName,
+	"empStatus": emp.empStatus
+},
+
+"mapObjectExample": empList[0] mapObject(empValue, empKey, indexOfEmp) -> {
+	(empKey): empValue
+},
+
+"mapWithFilter": empList filter($.empStatus == "A") map(emp, indexOfEmp) -> {
+	"employeeID" : emp.empID,
+	"employeeName": emp.empName,
+	"empStatus": emp.empStatus
+},
+
+"mapObjectWithFilterObject": empList[0] filterObject(($) == 100) mapObject(empValue, empKey, indexOfEmp) -> {
+	(empKey): empValue
+}
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="fetch-employees-flow" doc:id="8bfc715e-79a3-4855-94c7-bd7b5064a43a" >
+		<http:listener doc:name="Listener" doc:id="4a90cd55-8ecb-4bf5-9e4b-efd4b27cea52" config-ref="HTTP_Listener_config" path="fetch-employees"/>
+		<db:select doc:name="Select Employees" doc:id="0b8c0a21-0acc-4026-b486-77566f83cd04" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT emp_id, 
+    emp_name,
+    emp_status,
+    emp_appr_year,
+    emp_appr_per,
+    emp_exp,
+    emp_salary,
+    emp_desg,
+    emp_age
+FROM onboard.emp_backup]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Prepare Employees Response" doc:id="5e5b0c41-4075-4d41-836c-765a50474608" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload filter($.emp_desg == "Manager" and $.emp_status == "A") map  ( payload01 , indexOfPayload01 ) -> {
+	employeeID: payload01.emp_id as String,
+	employeeName: payload01.emp_name default "",
+	employeeStatus: payload01.emp_status default "",
+	employeeApprYear: payload01.emp_appr_year default "",
+	employeeApprPer: payload01.emp_appr_per as String default "",
+	employeeExp: payload01.emp_exp as String default "",
+	employeeSalary: payload01.emp_salary as String default "",
+	employeeDesg: payload01.emp_desg default "",
+	employeeAge: payload01.emp_age default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

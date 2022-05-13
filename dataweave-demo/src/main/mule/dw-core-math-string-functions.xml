@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="dw-core-math-string-functionsFlow" doc:id="134e65e8-12d4-4df1-934f-65b156899834" >
+		<ee:transform doc:name="DW Math Functions" doc:id="fa6163b7-94f2-4ced-9ac2-1b451301bc2d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"core-fun": "abs - Returns the absolute value of a number",
+	"abs-num1": abs(-2),
+	"abs-num2": abs(2.5),
+	"abs-num3": abs(-3.4),
+	"abs-num4": abs(3),
+	
+	"core-fun": "avg - Returns the average of numbers listed in an array",
+	"avg-num1": avg([1, 1000]), 
+	"avg-num2": avg([1, 2, 3]),
+	
+	"core-fun": "ceil - Rounds a number up to the nearest whole number",
+	"ceil-num1": ceil(1.5),
+	"ceil-num2": ceil(2.1),
+	"ceil-num3": ceil(3),
+	
+	"core-fun": "floor - Rounds a number down to the nearest whole number",
+	"floor-num1": floor(1.5),
+	"floor-num2": floor(2.2),
+	"floor-num3": floor(3),
+	"floor-num4": floor(4.9),
+	
+	"core-fun": "round - Rounds a number up or down to the nearest whole number.",
+	"round-num1": round(1.2), 
+	"round-num2": round(3.7),
+	"round-num2": round(4.5),
+
+	"core-fun": "min - Returns the lowest Comparable value in an array",
+	"min-num1": min([1, 1000]),
+	"min-num2": min([1, 2, 3]),
+	"min-num3": min([1.5, 2.5, 3.5, 0.5]),
+	
+	"core-fun": "minBy - Iterates over an array of objects to return the lowest value of comparable elements from it",
+	"minBy-num1": [ { "a" : 1 }, { "a" : 2 }, { "a" : 3 } ] minBy (item) -> item.a,
+	
+	"core-fun": "max - Returns the highest Comparable value in an array",
+	"max-num1": max([1, 1000]),
+	"max-num2": max([1, 2, 3]),
+	"max-num3": max([1.5, 2.5, 3.5]),
+	
+	"core-fun": "maxBy - Iterates over an array of objects to return the highest value of comparable elements from it",
+	"maxBy-num1": [ { "a" : 1 }, { "a" : 2 }, { "a" : 3 } ] maxBy (item) -> item.a,
+	
+	"core-fun": "isEven - Returns true if the given number is an integer (which lacks decimals), false if not",
+	"isEven-num1": isEven(1.5),
+	"isEven-num2": isEven(2),
+	"isEven-num3": isEven(3),
+	
+	"core-fun": "isOdd - Returns true if the number or numeric result of a mathematical operation is odd, false if not.",
+	"isOdd-num1": isOdd(1.5),
+	"isOdd-num2": isOdd(2.1),
+	"isOdd-num3": isOdd(3),
+	
+	"core-fun": "isInteger - Returns true if the given number is an integer (which lacks decimals), false if not",
+	"isInteger-num1": isInteger(1.5),
+	"isInteger-num2": isInteger(20),
+	"isInteger-num3": isInteger(3),
+	
+	"core-fun": "isDecimal - Returns true if the given number contains a decimal, false if not.",
+	"isDecimal-num1": isDecimal(1.5),
+	"isDecimal-num2": isDecimal(2.1),
+	"isDecimal-num3": isDecimal(3),
+	
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="dw-core-math-string-functionsFlow1" doc:id="8e900664-5da9-43cc-a4c3-99b11c497067" >
+		<ee:transform doc:name="DW String Functions" doc:id="42dee6d4-0cae-4cb1-815d-80d5645339c8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var name = "Chinna"
+---
+{
+	"contains example": "mulesoft" contains("mule"),
+	"find example": "aabccdbceaa" find "a",
+	"isBlank example": isBlank("hello"),
+	"isEmpty example array": isEmpty([1, 2, 3]),
+	"isEmpty example string": isEmpty(null),
+	"empName": if(! isEmpty(name)) name else "Not provided",
+	"lower example": lower("MULESOFTesb"),
+	"upper example": upper("MULEesb"),
+	"matches example": "me@mulesoft.com" matches(/([a-z]*)@([a-z]*).com/),
+	"replace example": "admin123" replace "123" with("ID"),
+	"splitBy example": ("a-b-c" splitBy("-"))[-1],
+	"startsWith example": "Mariano" startsWith("Mar"),
+	"endsWith example": "Mariano" endsWith("no"),
+	"trim example": trim("   my really long  text     ")
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

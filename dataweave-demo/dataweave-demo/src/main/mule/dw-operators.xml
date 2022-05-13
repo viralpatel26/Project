@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="dw-operatorsFlow" doc:id="cb27fe28-6273-4c87-b476-b3cc6782aa14" >
+		<ee:transform doc:name="DW Operators" doc:id="0bd975a6-df54-480d-a52c-4827caa1b557" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var firstNumber = 20
+var secondNumber = 10
+var firstName = "mule"
+var secondName = "ESB"
+var empNameArray = ["Chinna", "Ravi", "Mule"]
+var empObject = {
+	"empID": 19090,
+	"empName": "chinna",
+	"empStatus": "A"
+}
+var empList = [{
+	"empID": 19090,
+	"empName": "chinna",
+	"empStatus": "A"
+},
+	{
+	"empID": 9879,
+	"empName": "Ravi",
+	"empStatus": "A"
+}]
+---
+[{
+	"arithmenticOperators": {
+		"addition": firstNumber + secondNumber,
+		"substraction": firstNumber - secondNumber,
+		"mutiplication": firstNumber * secondNumber,
+		"Division": firstNumber / secondNumber
+	}
+},
+{
+	"comparisonOperators": {
+		"equlTo": firstNumber == secondNumber,
+		"lessThan": firstNumber < secondNumber,
+		"greaterThan": firstNumber > secondNumber,
+		"notEquaTo": firstNumber != secondNumber,
+		"lessThanOrEqualTo": firstNumber <= secondNumber,
+		"greaterThanOrEqualto": firstNumber >= secondNumber,
+	},
+	"++ operator": {
+		fullName: firstName ++ " " ++ secondName,
+		"empNames": empNameArray ++ ["ESB"],
+		"empPayload": empObject ++ {
+			empSalary: 564564
+		},
+		"empListPayload": empList ++ [{
+			"empID": 3543,
+			"empName": "Mule",
+			"empStatus": "A"
+		}]
+	},
+	"-- operator": {
+		"empNames": empNameArray -- ["Mule"],
+		"empPayload": empObject -- {
+			"empStatus": "A"
+		},
+		"empListPayload": empList -- [{
+          "empID": 19090,
+          "empName": "chinna",
+          "empStatus": "A"
+        }]
+	}
+}]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
